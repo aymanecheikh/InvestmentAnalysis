@@ -9,6 +9,8 @@ mysqlclient = "*"
 python-dotenv = "*"
 alpaca-py = "*"
 djangorestframework = "*"
+celery = "*"
+redis = "*"
 
 [dev-packages]
 
