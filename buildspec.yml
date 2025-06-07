@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  shell: "bash"
+  parameter-store:
+    SECRET_KEY: /investment_analysis/django/settings/secret_key
+    DB_PASSWORD: /investment_analysis/db/mysql/password
+    TIINGO_API_TOKEN: /investment_analysis/api/tiingo/token 
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.13
+    commands:
+      - echo "Installing dependencies..."
+      - pip3 install pipenv
+      - pipenv install
+  build:
+    commands:
+      - echo "Making scripts executable"
+      - chmod +x scripts/*.sh
+
+artifacts:
+  files:
+    - InvestmentAnalysis/**/*
+    - scripts/**/*
+    - appspec.yml
+
+  discard-paths: no
