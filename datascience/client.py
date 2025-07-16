@@ -1,5 +1,6 @@
 import requests
 import yfinance as yf
+import time
 
 
 class Client:
@@ -37,8 +38,13 @@ class Client:
             self.get_historical_stock_prices(ticker)
         )
 
+start = time.perf_counter()
 
 client = Client()
 
-print(client.get_detrend_evaluation("NVDA").json())
-print(client.get_price_predictions("NVDA").json())
+client.get_detrend_evaluation("NVDA").json()
+# client.get_price_predictions("NVDA").json()
+
+end = time.perf_counter()
+
+print(f"Elapsed time: {end - start:.2f} seconds")

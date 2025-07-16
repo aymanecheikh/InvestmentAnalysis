@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pandas import Series
+import pandas as pd
 from scipy.signal import detrend
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -166,23 +167,42 @@ class DetrendingEvaluator:
 
 
             strategy_evaluation = {
-                str(strategy()): {
-                    "ADF": f"{adfuller(detrended_data)[1]:.4f}",
-                    "KPSS": f"{kpss(detrended_data)[1]:.4f}",
-                    "Mean": f"{detrended_data.mean()}",
-                    "Variance Reduction": f"{
-                        raw_data.Close.var() - detrended_data.var()
-                    }",
-                    "Autocorrelation": self.evaluate_autocorrelation(
-                        acf_maac,
-                        ma_pacf,
-                        max_acf,
-                        max_pacf,
-                        ljungbox_min_pvalue
-                    )
-                }
+                "Strategy": str(strategy()),
+                "ADF": f"{adfuller(detrended_data)[1]:.4f}",
+                "KPSS": f"{kpss(detrended_data)[1]:.4f}",
+                "Mean": f"{detrended_data.mean()}",
+                "Variance Reduction": f"{
+                    raw_data.Close.var() - detrended_data.var()
+                }",
+                "Autocorrelation": self.evaluate_autocorrelation(
+                    acf_maac,
+                    ma_pacf,
+                    max_acf,
+                    max_pacf,
+                    ljungbox_min_pvalue
+                )
             }
+
             evaluation.append(strategy_evaluation)
+       
+        qualifiers = []
+        strat_eval_df = pd.DataFrame(evaluation)
+        strat_eval_df["Score"] = 0
+
+        def add_score(score: int) -> int:
+             score += 1
+             return score
+
+        adf_qualifiers = strat_eval_df.loc[strat_eval_df.ADF == strat_eval_df.ADF.min(), "Strategy"]
+        strat_eval_df.Score = strat_eval_df.apply(
+            lambda row: add_score(row.Score)
+            if row.Strategy in adf_qualifiers.values
+            else row.Score, axis=1
+        )
+
+        print(strat_eval_df)
+
+        
         return evaluation
 
     """
