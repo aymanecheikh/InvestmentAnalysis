@@ -3,8 +3,9 @@ from datetime import datetime
 from fastapi import FastAPI
 from typing import List
 
-from datascience.services.detrend import DetrendingEvaluator
+from datascience.services.detrender.detrend import evaluate_detrending_strategies
 from .services.predictions import predict_prices
+
 
 class StockData(BaseModel):
     Datetime: datetime
@@ -22,7 +23,8 @@ app = FastAPI()
 
 @app.post("/api/v0/evaluate/detrend")
 def evaluate_detrended_prices(stockdata: List[StockData]):
-    return DetrendingEvaluator().get_detrending_strategies(stockdata)
+    return evaluate_detrending_strategies(stockdata)
+
 
 @app.post("/api/v0/predict/prices")
 def get_stockdata(stockdata: List[StockData]):
