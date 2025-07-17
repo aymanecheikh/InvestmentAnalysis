@@ -21,6 +21,11 @@ class StockData(BaseModel):
 app = FastAPI()
 
 
+@app.get("/")
+def read_root():
+    return "Server is running"
+
+
 @app.post("/api/v0/evaluate/detrend")
 def evaluate_detrended_prices(stockdata: List[StockData]):
     return evaluate_detrending_strategies(stockdata)
