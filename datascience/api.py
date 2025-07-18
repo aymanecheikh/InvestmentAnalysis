@@ -3,8 +3,9 @@ from datetime import datetime
 from fastapi import FastAPI
 from typing import List
 
-from datascience.services.detrender.detrend import evaluate_detrending_strategies
-from .services.predictions import predict_prices
+from datascience.services.detrender.strat_facade import DetrendingFacade
+
+from .services.consume import Consumption
 
 
 class StockData(BaseModel):
@@ -19,18 +20,31 @@ class StockData(BaseModel):
 
 
 app = FastAPI()
+data = Consumption()
+detrend = DetrendingFacade()
 
 
 @app.get("/")
-def read_root():
+def health():
     return "Server is running"
 
 
-@app.post("/api/v0/evaluate/detrend")
-def evaluate_detrended_prices(stockdata: List[StockData]):
-    return evaluate_detrending_strategies(stockdata)
+@app.post("/test/consume/stockdata")
+def consume(stockdata: List[StockData]):
+    return data.consume_data(stockdata).to_json(
+            orient="records",
+            date_format="iso"
+            )
 
 
-@app.post("/api/v0/predict/prices")
-def get_stockdata(stockdata: List[StockData]):
-    return predict_prices(stockdata)
+@app.post("/test/detrend/implement")
+def consume_detrending_strategies(stockdata: List[StockData]):
+    return [
+            strategy.to_json(
+                orient="records",
+                date_format="iso"
+                ) 
+            for strategy in detrend.detrend_data(
+                stockdata
+                )
+            ]
