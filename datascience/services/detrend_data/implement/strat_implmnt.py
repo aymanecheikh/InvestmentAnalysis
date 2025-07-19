@@ -1,4 +1,4 @@
-from datascience.services.detrender.strat_design import DetrendingStrategy
+from datascience.services.detrend_data.implement.strat_design import DetrendingStrategy
 
 
 class Detrending:

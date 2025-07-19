@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import FastAPI
 from typing import List
 
-from datascience.services.detrender.strat_facade import DetrendingFacade
+from datascience.services.detrend_data.strat_facade import DetrendingFacade
 
 from .services.consume import Consumption
 
@@ -31,20 +31,16 @@ def health():
 
 @app.post("/test/consume/stockdata")
 def consume(stockdata: List[StockData]):
-    return data.consume_data(stockdata).to_json(
-            orient="records",
-            date_format="iso"
-            )
+    return data.consume_data(stockdata).to_json(orient="records", date_format="iso")
 
 
 @app.post("/test/detrend/implement")
 def consume_detrending_strategies(stockdata: List[StockData]):
     return [
-            strategy.to_json(
-                orient="records",
-                date_format="iso"
-                ) 
-            for strategy in detrend.detrend_data(
-                stockdata
-                )
-            ]
+        strategy.to_json(orient="records", date_format="iso")
+        for strategy in detrend.detrend_data(stockdata)
+    ]
+
+@app.post("/test/detrend/stats")
+def analyze_detrending_strategies(stockdata: List[StockData]):
+    return detrend.run_stats(stockdata)

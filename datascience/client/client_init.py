@@ -24,9 +24,10 @@ class Client:
             .to_json(orient="records", date_format="iso")
         )
 
-    def get_datafeed(self, ticker: str):
+    def run_strats(self, ticker: str):
         response = requests.post(
-            "http://127.0.0.1:8000/test/datafeed",
+            "http://127.0.0.1:8000/test/detrend/stats",
             self.get_historical_stock_prices(ticker),
         )
+        print(response.json())
         return response

@@ -59,7 +59,8 @@ class LinearRegressionDetrendingStrategy(DetrendingStrategy):
         values = data.Close.values.reshape(-1, 1)
         model = LinearRegression().fit(time, values)
         data["Trend"] = model.predict(time)
-        return data.Close - data.Trend
+        result = data.Close - data.Trend
+        return result
 
     def __str__(self) -> str:
         return "Linear Regression"
@@ -78,7 +79,8 @@ class HoltDetrendingStrategy(DetrendingStrategy):
         model = ExponentialSmoothing(data.Close, seasonal=None)
         fit = model.fit()
         data["Trend"] = fit.fittedvalues
-        return data.Close - data.Trend
+        result = data.Close - data.Trend
+        return result
 
     def __str__(self) -> str:
         return "Holt Winters"
