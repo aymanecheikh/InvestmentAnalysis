@@ -10,7 +10,6 @@ requires-python = ">=3.13"
 dependencies = [
     "yfinance (>=0.2.65,<0.3.0)",
     "python-binance (>=1.0.29,<2.0.0)",
-    "binance (>=0.3.55,<0.4.0)",
     "cryptography (>=45.0.5,<46.0.0)"
 ]
 

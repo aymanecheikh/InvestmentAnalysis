@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from datetime import datetime
-from binance.client import Client
 import os
 import pandas as pd
+from binance.client import Client
 
 api_key = os.environ.get("BINANCE_API_KEY")
 api_secret = os.environ.get("BINANCE_API_SECRET")
@@ -27,7 +26,7 @@ class BinanceHistory:
         )
         df_M = pd.DataFrame(
             klines,
-            columns=[
+            columns=[  # type: ignore
                 "Open Time",
                 "Open",
                 "High",
@@ -63,6 +62,7 @@ class BinanceHistory:
 class CloseData(BinanceHistory):
     def get_close_data(self):
         return self.historical_data["Close"]
+
 
 class VolumeData(BinanceHistory):
     def get_volume_data(self):
