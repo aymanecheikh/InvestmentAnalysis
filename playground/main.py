@@ -35,7 +35,33 @@ def get_ticker_data(ticker: str) -> DataFrame:
     data["aroon_up"] = hstack([[nan] * periods, aroon_up])
     data["aroon_down"] = hstack([[nan] * periods, aroon_down])
 
-    return data
+    data["previous_high"] = data["High"].shift(1)
+    data["previous_low"] = data["Low"].shift(1)
+    data["positive_directional_movement"] = data["High"] - data["previous_high"]
+    data["negative_directional_movement"] = data["Low"] - data["previous_low"]
+    data["average_positive_directional_movement"] = (
+        data["positive_directional_movement"].ewm(span=14, adjust=False).mean()
+    )
+    data["average_negative_directional_movement"] = (
+        data["negative_directional_movement"].ewm(span=14, adjust=False).mean()
+    )
+    data["positive_directional_indicator"] = (
+        data["average_positive_directional_movement"] / data["average_true_range"]
+    )
+    data["negative_directional_indicator"] = (
+        data["average_negative_directional_movement"] / data["average_true_range"]
+    )
+    data["directional_indicator_difference_abs"] = abs(
+        data["positive_directional_indicator"] - data["negative_directional_indicator"]
+    )
+    data["directional_index"] = data["directional_indicator_difference_abs"] / (
+        data["positive_directional_indicator"] + data["negative_directional_indicator"]
+    )
+    data["average_directional_index"] = (
+        data["directional_index"].ewm(span=14, adjust=False).mean()
+    )
+
+    return data.dropna().reset_index(drop=True)
 
 
 def main():
